@@ -1,30 +1,53 @@
-_An open-source status page companion for your services_
+_Status page companion for your services utilising Prometheus_
 
 # Service Status Page
-Whenever you deploy a service, it is always a good practice to monitor it. There are plenty of robust status page 
-solutions out there, however, a good deal of them just delivers yet another paid service that you have to manage. 
-Many often don't even integrate into existing infrastructure tools like Prometheus or Elasticsearch and try to replace 
-otherwise simple and capable stacks.
 
-While some of them are definitely a great option, like [Cachet](https://github.com/CachetHQ/Cachet), this project goal
-is to focus on the absolute minimum and ship a flexible, slim solution that integrates into other tools first.
+Whenever you deploy a service, it is always a good practice to monitor it. There are plenty of robust status page
+solutions out there, however, a good deal of them just delivers yet another paid service that you have to manage, and
+they seem not to integrate into existing tools all that often such as Prometheus.
+
+This simple tool is aim to be a lightweight companion to display one or many services health or R.E.D. information
+using Prometheus. For most sophisticated dashboards you should use tools like Grafana, but if your goal is to expose
+a simple and fast status page then this tool might be what you want.
 
 ## Features
-- integrates with existing tools or works as a standalone
-- re-usable web components; customise to your leisure
-- pluggable; only run what you actually need
 
+- integrates with Prometheus for displaying metrics and alerts
+- configurable for one or many services to be used as a sidecar or as a standalone status page
+- provides a push or pull mechanics for displaying news
 
-## Roadmap
-- [ ]  setup developer environment and project structure
-- [ ]  add backend that stores URL pings either in memory or using Prometheus
-- [ ]  add Prometheus data-source and metric configuration
-- [ ]  setup build and publish pipeline for docker
-- [ ]  add frontend that builds and bundles lit components
-- [ ]  add `service-status-page` application component
-- [ ]  add `ssp-metric-widget` component to show mean ping
-- [ ]  add `ssp-graph-widget` component to show over-time health
-- [ ]  add `ssp-uptime-widget` component to show liveliness history
-- [ ]  add `ssp-ping-source` to fetch data locally without the backend
-- [ ]  setup build and publish pipeline for web-components
-- [ ]  add Helm chart for standalone mode
+# How to use it?
+
+Add the image to your stack or deploy it independently using any of the available image distributions:
+
+- adaliszk/service-status-page
+- ghcr.io/adaliszk/service-status-page
+- quay.io/adaliszk/service-status-page
+
+You can then follow the instructions on the available page on :8080, or preset values using a config file:
+```yaml
+prometheus: prometheus-master.monitoring.cluster.local:9090
+history: 24h
+metrics:
+  - name: AVG Response Time
+    metric: avg_over_time(gateway_response_seconds[1m])
+    position: 1,0
+    size: 11,3
+  - name: P95 Latency
+    metric: gateway_latency
+    position: 0,0
+    size: 1,1
+  - name: 
+filters:
+  my-label: value
+news: rss.app/twitter/handle
+maintenance_match:
+  title: MAINTENANCE
+  begin: "starts at (\w+),"
+  duration: "lasts for (\d+) hours"
+```
+
+# Contributions
+
+The project is under development right now therefore there are many opportunities to contribute, and it is welcomed!
+Please read the [CONTRIBUTING](CONTRIBUTING.md) guide to help you get started.
